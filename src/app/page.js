@@ -18,13 +18,15 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50">
       {/* HERO SECTION */}
-      <section className="relative h-[80vh] flex items-center justify-center bg-gray-900">
+      <section className="relative h-screen flex items-center justify-center bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1595152452543-e5fc28ebc2b8?q=80&w=800&auto=format&fit=crop')] 
+             md:bg-[url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop')]">
+              <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 text-center text-white px-6">
           <h1 className="text-5xl md:text-6xl font-bold mb-4">Roganda Photo</h1>
           <p className="text-xl mb-8">Abadikan momen anda bersama kami</p>
           <div className="flex justify-center gap-4">
             <a href="#portfolio" className="px-6 py-3 bg-red-600 rounded-xl font-semibold hover:bg-red-700 transition">
-              Lihat Portofolio
+              Hasil foto
             </a>
             <button onClick={() => setIsOpen(true)} className="px-6 py-3 bg-green-600 rounded-xl font-semibold hover:bg-green-700 transition">
               Hubungi Kami
@@ -34,8 +36,8 @@ export default function Home() {
       </section>
 
       {/* PORTFOLIO SECTION */}
-      <section id="portfolio" className="py-16 px-6 md:px-20 max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-8">Galeri Kami</h2>
+      <section id="portfolio" className="py-16 px-6 md:px-20 max-w-7xl mx-auto h-screen">
+        <h2 className="text-3xl font-bold text-center mb-8 text-green-500">Galeri</h2>
         
         {/* Tombol Filter */}
         <div className="flex flex-wrap justify-center gap-3 mb-10">
@@ -73,6 +75,10 @@ export default function Home() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section id="package" className="py-16 px-6 md:px-20 max-w-7xl mx-auto h-screen">
+        <h2 className="text-3xl font-bold text-center mb-8 text-green-500">Paket acara</h2>
       </section>
 
       {/* MODAL GAMBAR */}

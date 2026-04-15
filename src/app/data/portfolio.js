@@ -23,6 +23,8 @@ export const photos = [
     id: 103, 
     category: "Cetak Khusus", 
     title: "Cetak Blanko Undangan", 
-    imageUrl: "https://images.unsplash.com/photo-1537233227664-98c5be1882cc?q=80&w=800&auto=format&fit=crop" 
+    imageUrl: "https://images.unsplash.com/photo-1595152452543-e5fc28ebc2b8?q=80&w=800&auto=format&fit=crop" 
+    
+    
   }
 ];
