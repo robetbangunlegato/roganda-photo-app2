@@ -19,7 +19,7 @@ export const photos = [
     category: "Aqiqah",
     title: "Pas Foto Studio",
     imageUrl:
-      "https://images.unsplash.com/photo-1595152452543-e5fc28ebc2b8?q=80&w=800&auto=format&fit=crop",
+      "https://res.cloudinary.com/dog13cr0h/image/upload/f_auto,q_auto/DSC_0024_f1qmd4",
   },
   {
     id: 103,
