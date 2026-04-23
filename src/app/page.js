@@ -1,14 +1,42 @@
 // File: src/app/page.js
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { categories, photos, packages } from "./data/portfolio";
+import { categories, packages } from "./data/portfolio";
 
 export default function Home() {
+  const [photos, setPhotos] = useState([]); // Buat state untuk menampung foto dari API
+  const [loading, setLoading] = useState(true); // State loading
   const [filter, setFilter] = useState("Semua");
   const [selectedImage, setSelectedImage] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  // Fungsi untuk mengambil data dari API Cloudinary
+  useEffect(() => {
+    async function fetchPhotos() {
+      try {
+        const response = await fetch("/api/photos");
+        const data = await response.json();
+
+        // Kita ubah format data Cloudinary ke format yang dipahami web kita
+        const formattedPhotos = data.map((img) => ({
+          id: img.public_id,
+          // Mengambil kategori dari nama folder di Cloudinary
+          category: img.folder?.split("/")[1] || "Lainnya",
+          title: img.context?.custom?.caption || "Karya Roganda Photo",
+          imageUrl: img.secure_url,
+        }));
+
+        setPhotos(formattedPhotos);
+        setLoading(false);
+      } catch (error) {
+        console.error("Gagal mengambil foto:", error);
+        setLoading(false);
+      }
+    }
+    fetchPhotos();
+  }, []);
 
   /*UNTUK HANDLE FITUR 'MUAT LEBIH BANYAK'*/
 
@@ -40,7 +68,7 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50">
       {/* HERO SECTION */}
       <section
-        className="relative h-screen flex items-center justify-center bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1595152452543-e5fc28ebc2b8?q=80&w=800&auto=format&fit=crop')] 
+        className="relative h-screen flex items-center justify-center bg-cover bg-center bg-[url('https://res.cloudinary.com/dog13cr0h/image/upload/v1776588435/DSC_2009_if1mig.jpg')] 
              md:bg-[url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop')]"
       >
         <div className="absolute inset-0 bg-black/50"></div>
@@ -93,20 +121,20 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Grid Foto */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {/* Grid Foto - Gaya Masonry (Pinterest) */}
+        <div className="columns-1 sm:columns-2 md:columns-3 gap-6 space-y-6">
           {displayedImages.map((img) => (
             <div
               key={img.id}
-              className="relative h-64 w-full rounded-xl overflow-hidden cursor-pointer group shadow-lg"
+              className="relative w-full break-inside-avoid rounded-xl overflow-hidden cursor-pointer group shadow-lg"
               onClick={() => setSelectedImage(img.imageUrl)}
             >
-              <Image
+              {/* Kita gunakan tag img standar agar Next.js tidak memaksa dimensi gambar */}
+              <img
                 src={img.imageUrl}
                 alt={img.title}
-                fill
-                className="object-cover group-hover:scale-110 transition duration-300"
-                sizes="(max-width: 768px) 100vw, 33vw"
+                loading="lazy"
+                className="w-full h-auto object-cover group-hover:scale-105 transition duration-300"
               />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-end p-4">
                 <span className="text-white font-semibold">{img.title}</span>
