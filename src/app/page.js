@@ -20,13 +20,57 @@ export default function Home() {
         const data = await response.json();
 
         // Kita ubah format data Cloudinary ke format yang dipahami web kita
-        const formattedPhotos = data.map((img) => ({
-          id: img.public_id,
-          // Mengambil kategori dari nama folder di Cloudinary
-          category: img.folder?.split("/")[1] || "Lainnya",
-          title: img.context?.custom?.caption || "Karya Roganda Photo",
-          imageUrl: img.secure_url,
-        }));
+        const formattedPhotos = data.map((img, index) => {
+          const watermark =
+            "l_roganda-watermark_tegdf9,w_0.2,fl_relative,g_south_east,x_0.02,y_0.02,o_100";
+
+          // 2. Sisipkan mantra tersebut ke dalam link asli Cloudinary
+          // Kita mengganti kata "/upload/" menjadi "/upload/mantra_watermark/"
+          const protectedUrl = img.secure_url.replace(
+            "/upload/",
+            `/upload/${watermark}/`,
+          );
+
+          // 1. Ambil jalur mentah dari semua kemungkinan yang disediakan Cloudinary
+          let rawPath = img.asset_folder || img.folder || "";
+
+          // Jika dari sana kosong, kita ekstrak manual dari public_id
+          if (!rawPath && img.public_id) {
+            const parts = img.public_id.split("/");
+            parts.pop(); // Buang elemen paling akhir (nama file foto)
+            rawPath = parts.join("/");
+          }
+
+          // Saat ini, rawPath bisa berbentuk: "roganda-photo/Pernikahan Adat Batak" atau "Pernikahan Adat Batak"
+          // 2. Kita pecah lagi berdasarkan tanda miring
+          const pathParts = rawPath.split("/");
+
+          // 3. Ambil SELALU bagian yang paling ujung/terakhir (Subfolder)
+          let folderName = pathParts[pathParts.length - 1];
+
+          // 4. Pengaman Akhir: Jika kosong, atau malah terambil folder induk utama
+          if (!folderName || folderName === "roganda-photo") {
+            folderName = "Lainnya";
+          }
+
+          console.info(
+            "Path Mentah:",
+            rawPath,
+            "=> Kategori Bersih:",
+            folderName,
+          );
+
+          // RAKIT JUDUL SEO OTOMATIS:
+          const seoTitle = `Jasa Fotografer ${folderName} di Palembang - Roganda Photo Property No. ${index + 1}`;
+
+          return {
+            id: img.public_id,
+            category: folderName,
+            title: seoTitle,
+            // 3. Gunakan URL yang sudah dilindungi
+            imageUrl: protectedUrl,
+          };
+        });
 
         setPhotos(formattedPhotos);
         setLoading(false);
@@ -122,26 +166,47 @@ export default function Home() {
         </div>
 
         {/* Grid Foto - Gaya Masonry (Pinterest) */}
-        <div className="columns-1 sm:columns-2 md:columns-3 gap-6 space-y-6">
-          {displayedImages.map((img) => (
-            <div
-              key={img.id}
-              className="relative w-full break-inside-avoid rounded-xl overflow-hidden cursor-pointer group shadow-lg"
-              onClick={() => setSelectedImage(img.imageUrl)}
-            >
-              {/* Kita gunakan tag img standar agar Next.js tidak memaksa dimensi gambar */}
-              <img
-                src={img.imageUrl}
-                alt={img.title}
-                loading="lazy"
-                className="w-full h-auto object-cover group-hover:scale-105 transition duration-300"
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-end p-4">
-                <span className="text-white font-semibold">{img.title}</span>
+        {loading ? (
+          // 1. Tampilan saat Sedang Loading (Menunggu API Cloudinary)
+          <div className="flex flex-col items-center justify-center py-20 w-full">
+            {/* Animasi Spinner */}
+            <div className="w-12 h-12 border-4 border-gray-200 border-t-red-600 rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-500 font-medium animate-pulse">
+              Loading...
+            </p>
+          </div>
+        ) : displayedImages.length > 0 ? (
+          // 2. Tampilan Grid Foto - Gaya Masonry (Jika foto berhasil dimuat)
+          <div className="columns-1 sm:columns-2 md:columns-3 gap-6 space-y-6 mb-10">
+            {displayedImages.map((img) => (
+              <div
+                key={img.id}
+                className="relative w-full break-inside-avoid rounded-xl overflow-hidden cursor-pointer group shadow-lg"
+                onClick={() => setSelectedImage(img.imageUrl)}
+                // 1. Me-nonaktifkan klik kanan (context menu) pada areah gambar
+                onContextMenu={(e) => e.preventDefault()}
+              >
+                <img
+                  src={img.imageUrl}
+                  alt={img.title}
+                  loading="lazy"
+                  className="w-full h-auto object-cover group-hover:scale-105 transition duration-300 pointer-events-none select-none" // 2. pointer-events-none mematikan interaksi sentuh/tahan pada gambar
+                  draggable="false" // 3. Mencegah gambar diseret (drag) ke tab baru
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-end p-4">
+                  <span className="text-white font-semibold">{img.title}</span>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          // 3. Tampilan Kosong (Jika API tidak menemukan foto di kategori tersebut)
+          <div className="flex justify-center items-center py-20 w-full">
+            <p className="text-gray-500 italic font-medium">
+              Belum ada foto untuk kategori ini.
+            </p>
+          </div>
+        )}
 
         {/* Tombol 'Muat lebih banyak' */}
         <div className="flex justify-center mt-8">
@@ -159,6 +224,29 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {/* MODAL GAMBAR */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+          // 1. Me-nonaktifkan klik kanan (context menu) pada areah gambar
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          <div className="relative w-full max-w-4xl h-[80vh]">
+            <Image
+              src={selectedImage}
+              alt="Perbesar Foto"
+              fill
+              className="object-contain pointer-events-none select-none"
+              draggable="false"
+            />
+            <button className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-red-600 text-xl font-bold">
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* PACKAGE SECTION */}
       <section
@@ -251,26 +339,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-      {/* MODAL GAMBAR */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div className="relative w-full max-w-4xl h-[80vh]">
-            <Image
-              src={selectedImage}
-              alt="Perbesar Foto"
-              fill
-              className="object-contain"
-            />
-            <button className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-red-600 text-xl font-bold">
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* MODAL KONTAK */}
       {isOpen && (
