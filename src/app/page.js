@@ -29,7 +29,7 @@ export default function Home() {
           const optGrid = "f_auto,q_auto,w_800,c_scale";
 
           // Untuk tampilan Modal Pop-up (Tajam, resolusi tinggi maks 1920px untuk layar monitor)
-          const optModal = "f_auto,q_80,w_1920,c_scale";
+          const optModal = "f_auto,q_80,c_scale";
 
           // 3. Sisipkan ke dalam URL yang berbeda
           const urlGrid = img.secure_url.replace(
