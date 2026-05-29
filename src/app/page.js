@@ -24,11 +24,14 @@ export default function Home() {
           const watermark =
             "l_roganda-watermark_tegdf9,w_0.2,fl_relative,g_south_east,x_0.02,y_0.02,o_100";
 
+          // 2. TAMBAHAN BARU: Mantra Optimasi (WebP, Kompresi, Resolusi Max 800px)
+          const optimization = "f_auto,q_auto,w_800,c_scale";
+
           // 2. Sisipkan mantra tersebut ke dalam link asli Cloudinary
           // Kita mengganti kata "/upload/" menjadi "/upload/mantra_watermark/"
           const protectedUrl = img.secure_url.replace(
             "/upload/",
-            `/upload/${watermark}/`,
+            `/upload/${optimization}/${watermark}/`,
           );
 
           // 1. Ambil jalur mentah dari semua kemungkinan yang disediakan Cloudinary
@@ -113,7 +116,7 @@ export default function Home() {
       {/* HERO SECTION */}
       <section
         className="relative h-screen flex items-center justify-center bg-cover bg-center bg-[url('https://res.cloudinary.com/dog13cr0h/image/upload/v1776588435/DSC_2009_if1mig.jpg')] 
-             md:bg-[url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop')]"
+             md:bg-[url('https://res.cloudinary.com/dog13cr0h/image/upload/q_auto/f_auto/v1776588419/DSC_3199_cw9n1o.jpg')]"
       >
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 text-center text-white px-6">
