@@ -41,12 +41,6 @@ export default function Home() {
             `/upload/${optModal}/${watermark}/`,
           );
 
-          // Kita mengganti kata "/upload/" menjadi "/upload/mantra_watermark/"
-          const protectedUrl = img.secure_url.replace(
-            "/upload/",
-            `/upload/${optimization}/${watermark}/`,
-          );
-
           // 1. Ambil jalur mentah dari semua kemungkinan yang disediakan Cloudinary
           let rawPath = img.asset_folder || img.folder || "";
 
