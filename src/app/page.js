@@ -24,10 +24,23 @@ export default function Home() {
           const watermark =
             "l_roganda-watermark_tegdf9,w_0.2,fl_relative,g_south_east,x_0.02,y_0.02,o_100";
 
-          // 2. TAMBAHAN BARU: Mantra Optimasi (WebP, Kompresi, Resolusi Max 800px)
-          const optimization = "f_auto,q_auto,w_800,c_scale";
+          // 2. Buat DUA jenis optimasi
+          // Untuk tampilan Grid luar (Ringan, maks 800px)
+          const optGrid = "f_auto,q_auto,w_800,c_scale";
 
-          // 2. Sisipkan mantra tersebut ke dalam link asli Cloudinary
+          // Untuk tampilan Modal Pop-up (Tajam, resolusi tinggi maks 1920px untuk layar monitor)
+          const optModal = "f_auto,q_80,w_1920,c_scale";
+
+          // 3. Sisipkan ke dalam URL yang berbeda
+          const urlGrid = img.secure_url.replace(
+            "/upload/",
+            `/upload/${optGrid}/${watermark}/`,
+          );
+          const urlModal = img.secure_url.replace(
+            "/upload/",
+            `/upload/${optModal}/${watermark}/`,
+          );
+
           // Kita mengganti kata "/upload/" menjadi "/upload/mantra_watermark/"
           const protectedUrl = img.secure_url.replace(
             "/upload/",
@@ -70,8 +83,8 @@ export default function Home() {
             id: img.public_id,
             category: folderName,
             title: seoTitle,
-            // 3. Gunakan URL yang sudah dilindungi
-            imageUrl: protectedUrl,
+            thumbnailUrl: urlGrid, // Gunakan ini untuk Grid
+            modalUrl: urlModal, // Gunakan ini untuk Pop-up
           };
         });
 
@@ -185,12 +198,12 @@ export default function Home() {
               <div
                 key={img.id}
                 className="relative w-full break-inside-avoid rounded-xl overflow-hidden cursor-pointer group shadow-lg"
-                onClick={() => setSelectedImage(img.imageUrl)}
+                onClick={() => setSelectedImage(img.modalUrl)}
                 // 1. Me-nonaktifkan klik kanan (context menu) pada areah gambar
                 onContextMenu={(e) => e.preventDefault()}
               >
                 <img
-                  src={img.imageUrl}
+                  src={img.thumbnailUrl}
                   alt={img.title}
                   loading="lazy"
                   className="w-full h-auto object-cover group-hover:scale-105 transition duration-300 pointer-events-none select-none" // 2. pointer-events-none mematikan interaksi sentuh/tahan pada gambar
