@@ -95,7 +95,7 @@ export default function Home() {
   /*UNTUK HANDLE FITUR 'MUAT LEBIH BANYAK'*/
 
   // state untuk melacak jumlah foto yang ditampilkan (default 6)
-  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleCount, setVisibleCount] = useState(50);
 
   // fungsi untuk handle saat kategori diubah: harus me-reset jumlah foto yang ditampilkan kembali ke nilai default yaitu 6
   const handleFilterChange = (newFilter) => {
