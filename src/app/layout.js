@@ -12,9 +12,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Roganda Photo",
+  title: "Roganda Photo/Foto Palembang",
   description:
-    "Cetak dan dokumentasikan momen penting anda bersama kami Roganda Photo Palembang",
+    "cetak dan dokumentasikan momen penting anda bersama kami Roganda Photo Palembang",
 };
 
 export default function RootLayout({ children }) {
