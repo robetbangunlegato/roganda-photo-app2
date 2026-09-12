@@ -1,0 +1,4 @@
+need to fix:
+1. delete 'muat lebih banyak' button
+2. ascending sort to displayed image
+3. display loading at clicked image
